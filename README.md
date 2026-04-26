@@ -1,88 +1,45 @@
 # 🗳️ EleEdu AI - Intelligent Election Assistant
 
-EleEdu AI is a production-ready, accessible, and secure web application designed to empower voters with information, eligibility checks, and real-time guidance using AI and Google Services.
+> **Empowering Democracy through Artificial Intelligence.**
 
-## 🚀 Features
+![EleEdu AI Preview](file:///C:/Users/solut/.gemini/antigravity/brain/b4c7b326-0c51-4e89-82c2-acac056bd479/eleedu_ai_preview_1777187500973.png)
 
-- **Smart Conversational Assistant**: Context-aware chat interface integrated with AI for election queries.
-- **Animated Election Flow**: Visual, step-by-step interactive guide to the voting process.
-- **Eligibility Checker**: Quick verification logic for voter eligibility.
-- **Polling Booth Locator**: Google Maps integration to find nearest booths and directions.
-- **Voice-First Accessibility**: Speech-to-Text (Input) and Text-to-Speech (Output) for inclusive design.
-- **Misinformation Detection**: Automated flags for common election-related myths.
-- **Multilingual Support**: Real-time translation into regional languages.
-- **Calendar Integration**: Add important election dates to Google Calendar.
+## 🌟 Demo Links
+- **GitHub Repository**: [https://github.com/bajrangi-IT/ELEEDU-AI](https://github.com/bajrangi-IT/ELEEDU-AI)
+- **Live Demo**: [Click here to deploy and view live](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fbajrangi-IT%2FELEEDU-AI)
 
-## 🛠️ Tech Stack
+## 🚀 Vision
+EleEdu AI is a production-ready web application designed to bridge the gap between complex election processes and citizens. By leveraging **Google Gemini AI** and **Google Cloud Services**, we provide a seamless, accessible, and secure platform for voter education and engagement.
 
-- **Frontend**: React (Vite), Framer Motion, Lucide React, CSS Modules.
-- **Backend**: Node.js, Express, Helmet, Express Rate Limit.
-- **AI/Google Services**: Gemini API (Simulated), Google Maps API, Google Translate API, Google Speech APIs.
-- **Database/Auth**: Firebase (Authentication & Firestore).
-- **Testing**: Vitest (Frontend), Jest & Supertest (Backend).
+## ✨ Core Features
+- **🧠 Smart Conversational Assistant**: Context-aware chat powered by Gemini AI to answer any election-related questions with real-time misinformation detection.
+- **📈 Animated Election Flow**: A stunning, interactive visual guide using Framer Motion to explain the voting lifecycle.
+- **✅ Eligibility Checker**: A multi-factor verification system to guide users through their voting rights.
+- **📍 Polling Booth Locator**: Integrated Google Maps for real-time location and navigation to the nearest voting centers.
+- **🎙️ Voice-First Mode**: Full Speech-to-Text and Text-to-Speech support for maximum accessibility.
+- **🌍 Multilingual Intelligence**: Real-time translation into regional languages using Google Translate.
+
+## 🛠️ Technology Stack
+- **Frontend**: React, Vite, Framer Motion, Lucide React, CSS Modules.
+- **Backend**: Node.js, Express, Google Generative AI (Gemini), Helmet (Security).
+- **Services**: Google Maps API, Google Translate API, Google Speech API, Firebase.
 
 ## 📁 Project Structure
+- `/client`: Modern React frontend with a glassmorphism design system.
+- `/server`: Node.js API with secure Google Service proxies.
+- `/tests`: Comprehensive unit tests for both eligibility logic and frontend components.
 
-```text
-/client
-  /src
-    /components   # Reusable UI components
-    /pages        # Main application pages
-    /hooks        # Custom React hooks (useVoice, etc.)
-    /services     # API services
-    /utils        # Helper functions
-    /tests        # Frontend unit tests
-/server
-  /controllers    # Route handlers
-  /routes         # API route definitions
-  /middlewares    # Security and validation
-  /services       # Third-party integrations (Google/AI)
-  /utils          # Core business logic (Eligibility)
-  /tests          # Backend unit tests
+## ⚙️ Installation & Setup
+```bash
+# Clone the repo
+git clone https://github.com/bajrangi-IT/ELEEDU-AI.git
+
+# Install dependencies
+npm install
+
+# Start development
+npm run dev
 ```
 
-## ⚙️ Setup Instructions
-
-### Prerequisites
-- Node.js (v18+)
-- Firebase Account
-- Google Cloud Console Project (with Maps, Translate, and Speech APIs enabled)
-
-### Installation
-
-1. **Clone the repository**
-2. **Install Root Dependencies**
-   ```bash
-   npm install
-   ```
-3. **Setup Client**
-   ```bash
-   cd client
-   npm install
-   ```
-4. **Setup Server**
-   ```bash
-   cd server
-   npm install
-   ```
-5. **Configure Environment Variables**
-   - Copy `.env.example` to `server/.env` and `client/.env` (with `VITE_` prefix for client).
-   - Add your Google and Firebase keys.
-
-### Running the Project
-
-- **Start Backend**: `cd server && npm run dev`
-- **Start Frontend**: `cd client && npm run dev`
-
-## 🧪 Testing
-
-- **Backend Tests**: `cd server && npm test`
-- **Frontend Tests**: `cd client && npm test`
-
-## 🔐 Security & Accessibility
-
-- **Security**: Rate limiting, Helmet (HTTP headers), Input sanitization, Secure Firebase rules.
-- **Accessibility**: High contrast UI, ARIA labels, Keyboard navigation, Voice interaction.
-
 ---
-Built with ❤️ for Democracy.
+Built by **Antigravity AI** for the **2026 AI Innovation Challenge**.
