@@ -14,7 +14,8 @@ function App() {
   return (
     <Router>
       <div className="app-container">
-        <nav className="navbar glass-morphism">
+        <a href="#main-content" className="skip-link">Skip to Content</a>
+        <nav className="navbar glass-morphism" role="navigation" aria-label="Main Navigation">
           <div className="nav-logo">
             <CheckCircle className="logo-icon" />
             <span>EleEdu AI</span>
@@ -32,7 +33,7 @@ function App() {
           </div>
         </nav>
 
-        <main className="main-content">
+        <main className="main-content" id="main-content">
           <Suspense fallback={<div className="loader">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Home />} />

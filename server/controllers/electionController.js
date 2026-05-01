@@ -105,50 +105,37 @@ const handleChat = async (req, res) => {
         process.env.GEMINI_API_KEY !== 'MOCK_KEY' &&
         process.env.GEMINI_API_KEY.startsWith('AIza')) {
       
-      const modelsToTry = [
-        "gemini-2.0-flash", 
-        "gemini-2.5-flash", 
-        "gemini-2.5-pro"
-      ];
+      const modelsToTry = ["gemini-2.0-flash", "gemini-2.5-flash"];
       let lastError;
-
       const axios = require('axios');
 
       for (const modelName of modelsToTry) {
         try {
-          // Direct API call to bypass SDK version issues
           const response = await axios.post(
             `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
-              contents: [{ parts: [{ text: prompt }] }]
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                temperature: 0.7,
+                topP: 0.8,
+                topK: 40,
+                maxOutputTokens: 1024,
+              }
             },
             { headers: { 'Content-Type': 'application/json' } }
           );
 
-          if (response.data && response.data.candidates && response.data.candidates[0].content) {
+          if (response.data?.candidates?.[0]?.content) {
             responseText = response.data.candidates[0].content.parts[0].text;
             break;
           }
         } catch (err) {
-          const errorMsg = err.response?.data?.error?.message || err.message;
-          console.warn(`Model ${modelName} direct call failed:`, errorMsg);
-          lastError = new Error(errorMsg);
+          lastError = err.response?.data?.error?.message || err.message;
         }
       }
 
       if (!responseText) {
-        // Discovery Mode: Get list of all available models for this API key
-        let availableModels = "Unknown";
-        try {
-          const listRes = await axios.get(`https://generativelanguage.googleapis.com/v1/models?key=${process.env.GEMINI_API_KEY}`);
-          if (listRes.data && listRes.data.models) {
-            availableModels = listRes.data.models.map(m => m.name.replace('models/', '')).join(', ');
-          }
-        } catch (listErr) {
-          availableModels = "Failed to fetch model list: " + listErr.message;
-        }
-
-        throw new Error(`[VER 4.0] AI Brain Error: All primary models failed. \nAvailable for your key: [${availableModels}]. \nLast error: ${lastError.message}`);
+        throw new Error(`AI Assistant Error: Unable to reach AI brain. Details: ${lastError}`);
       }
     } else {
       // Fallback/Mock mode for local development or missing configuration
