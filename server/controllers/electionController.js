@@ -106,9 +106,9 @@ const handleChat = async (req, res) => {
         process.env.GEMINI_API_KEY.startsWith('AIza')) {
       
       const modelsToTry = [
-        "gemini-1.5-flash", 
-        "gemini-1.5-pro", 
-        "gemini-pro"
+        "gemini-2.0-flash", 
+        "gemini-2.5-flash", 
+        "gemini-2.5-pro"
       ];
       let lastError;
 
