@@ -48,7 +48,7 @@ const handleChat = async (req, res) => {
     const prompt = `${systemPrompt}\n\nUser Question: ${query}`;
     
     let responseText;
-    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.startsWith('AIza')) {
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key') {
       // Try specific model versions verified for this key
       const modelsToTry = ["gemini-flash-latest", "gemini-pro-latest", "gemini-2.5-flash-lite"];
       let lastError;
