@@ -105,10 +105,25 @@ const handleChat = async (req, res) => {
         process.env.GEMINI_API_KEY !== 'MOCK_KEY' &&
         process.env.GEMINI_API_KEY.startsWith('AIza')) {
       
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      responseText = response.text();
+      const modelsToTry = ["gemini-1.5-flash", "gemini-pro", "gemini-1.5-flash-latest"];
+      let lastError;
+
+      for (const modelName of modelsToTry) {
+        try {
+          const model = genAI.getGenerativeModel({ model: modelName });
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          responseText = response.text();
+          if (responseText) break; 
+        } catch (err) {
+          console.warn(`Model ${modelName} failed:`, err.message);
+          lastError = err;
+        }
+      }
+
+      if (!responseText) {
+        throw new Error(`AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
+      }
     } else {
       // Fallback/Mock mode for local development or missing configuration
       responseText = `[MOCK AI MODE] I received your question: "${query}". Please check your GEMINI_API_KEY configuration on the platform.`;
