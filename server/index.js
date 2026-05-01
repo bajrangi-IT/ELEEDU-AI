@@ -39,10 +39,14 @@ app.get('/', (req, res) => {
 });
 
 // Start Server
-const server = app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (require.main === module) {
+  const server = app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 
-server.on('error', (error) => {
-  console.error('Server error:', error);
-});
+  server.on('error', (error) => {
+    console.error('Server error:', error);
+  });
+}
+
+module.exports = app;
