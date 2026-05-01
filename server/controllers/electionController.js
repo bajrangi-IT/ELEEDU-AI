@@ -12,8 +12,8 @@ require('dotenv').config();
 // Initialize Caching (TTL 1 hour) for optimized performance and reduced API costs
 const chatCache = new NodeCache({ stdTTL: 3600 });
 
-// Initialize Google Gemini Generative AI with stable v1 API
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY', { apiVersion: 'v1' });
+// Initialize Google Gemini Generative AI (apiVersion set in getGenerativeModel)
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
 /**
  * Validates voter eligibility based on user-provided demographic data.
@@ -115,7 +115,8 @@ const handleChat = async (req, res) => {
 
       for (const modelName of modelsToTry) {
         try {
-          const model = genAI.getGenerativeModel({ model: modelName });
+          // apiVersion must be passed to getGenerativeModel, not the constructor
+          const model = genAI.getGenerativeModel({ model: modelName }, { apiVersion: 'v1' });
           const result = await model.generateContent(prompt);
           const response = await result.response;
           responseText = response.text();
