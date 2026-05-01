@@ -137,7 +137,18 @@ const handleChat = async (req, res) => {
       }
 
       if (!responseText) {
-        throw new Error(`[VER 3.0] AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
+        // Discovery Mode: Get list of all available models for this API key
+        let availableModels = "Unknown";
+        try {
+          const listRes = await axios.get(`https://generativelanguage.googleapis.com/v1/models?key=${process.env.GEMINI_API_KEY}`);
+          if (listRes.data && listRes.data.models) {
+            availableModels = listRes.data.models.map(m => m.name.replace('models/', '')).join(', ');
+          }
+        } catch (listErr) {
+          availableModels = "Failed to fetch model list: " + listErr.message;
+        }
+
+        throw new Error(`[VER 4.0] AI Brain Error: All primary models failed. \nAvailable for your key: [${availableModels}]. \nLast error: ${lastError.message}`);
       }
     } else {
       // Fallback/Mock mode for local development or missing configuration
