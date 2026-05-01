@@ -108,27 +108,36 @@ const handleChat = async (req, res) => {
       const modelsToTry = [
         "gemini-1.5-flash", 
         "gemini-1.5-pro", 
-        "gemini-1.0-pro", 
         "gemini-pro"
       ];
       let lastError;
 
+      const axios = require('axios');
+
       for (const modelName of modelsToTry) {
         try {
-          // apiVersion must be passed to getGenerativeModel, not the constructor
-          const model = genAI.getGenerativeModel({ model: modelName }, { apiVersion: 'v1' });
-          const result = await model.generateContent(prompt);
-          const response = await result.response;
-          responseText = response.text();
-          if (responseText) break; 
+          // Direct API call to bypass SDK version issues
+          const response = await axios.post(
+            `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`,
+            {
+              contents: [{ parts: [{ text: prompt }] }]
+            },
+            { headers: { 'Content-Type': 'application/json' } }
+          );
+
+          if (response.data && response.data.candidates && response.data.candidates[0].content) {
+            responseText = response.data.candidates[0].content.parts[0].text;
+            break;
+          }
         } catch (err) {
-          console.warn(`Model ${modelName} failed:`, err.message);
-          lastError = err;
+          const errorMsg = err.response?.data?.error?.message || err.message;
+          console.warn(`Model ${modelName} direct call failed:`, errorMsg);
+          lastError = new Error(errorMsg);
         }
       }
 
       if (!responseText) {
-        throw new Error(`[VER 2.0] AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
+        throw new Error(`[VER 3.0] AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
       }
     } else {
       // Fallback/Mock mode for local development or missing configuration
