@@ -25,25 +25,13 @@ app.use(helmet({
 }));
 
 // CORS Configuration
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://eleedu-ai.vercel.app',
-  'https://eleedu-ai.netlify.app'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true, // Allow all origins for testing/development
   methods: ['GET', 'POST'],
   credentials: true
 }));
 
-app.use(express.json({ limit: '10kb' })); // Body limit to prevent DoS
+app.use(express.json({ limit: '50kb' })); // Increased limit slightly
 
 // Request Logging
 app.use((req, res, next) => {
