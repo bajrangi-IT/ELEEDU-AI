@@ -11,15 +11,23 @@ initializeFirebase();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Security: Validate required environment variables at startup
+if (!process.env.GEMINI_API_KEY) {
+  console.error('FATAL ERROR: GEMINI_API_KEY is not defined in environment variables.');
+  process.exit(1);
+}
+
 // Middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"], // Removed 'unsafe-inline' for better security
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://generativelanguage.googleapis.com"],
+      connectSrc: ["'self'", "https://generativelanguage.googleapis.com", "https://maps.googleapis.com"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
     },
   },
 }));

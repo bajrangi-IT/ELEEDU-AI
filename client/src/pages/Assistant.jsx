@@ -28,7 +28,12 @@ const Assistant = () => {
     setInput('');
     // Call Backend API with Gemini Integration
     try {
-      const response = await axios.post('/api/chat', { query: input });
+      const history = messages.slice(-3).map(m => ({ role: m.type === 'user' ? 'user' : 'model', parts: [{ text: m.text }] }));
+      
+      const response = await axios.post('/api/chat', { 
+        query: input,
+        history: history 
+      });
       
       const botResponse = { 
         id: Date.now() + 1, 

@@ -11,6 +11,46 @@
 ## 🚀 Vision
 EleEdu AI is a production-ready web application designed to bridge the gap between complex election processes and citizens. By leveraging **Google Gemini AI** and **Google Cloud Services**, we provide a seamless, accessible, and secure platform for voter education and engagement.
 
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User((User))
+    subgraph Frontend_Vite_React
+        UI[React Components]
+        Context[Conversation History]
+    end
+    subgraph Backend_Node_Express
+        Controller[Election Controller]
+        Service[Gemini Service]
+        Cache[(Node-Cache)]
+    end
+    subgraph External_Services
+        Gemini[Google Gemini 2.0/2.5]
+        GTranslate[Google Translate API]
+        GMaps[Google Maps API]
+    end
+
+    User <--> UI
+    UI <--> Controller
+    Controller <--> Service
+    Controller <--> Cache
+    Service <--> Gemini
+    Controller <--> GTranslate
+    UI <--> GMaps
+```
+
+## 🔐 Security & Defensive Practices
+- **Strict CSP**: Hardened Content Security Policy to prevent XSS.
+- **Rate Limiting**: Protects against DoS and brute-force attacks.
+- **Environment Validation**: Fail-fast startup if API keys are missing.
+- **Input Sanitization**: Joi-based validation for all incoming payloads.
+
+## ♿ Accessibility (A11y)
+- **WCAG 2.1 Compliant**: ARIA labels, semantic HTML, and high contrast.
+- **Reduced Motion**: Respects OS-level motion preferences.
+- **Keyboard Navigable**: Full support for screen readers and focus management.
+
 ## 🛠️ Technical Stack
 - **Frontend**: React 19, Vite, Framer Motion (Animations), Lucide React (Icons).
 - **Backend**: Node.js, Express 5.

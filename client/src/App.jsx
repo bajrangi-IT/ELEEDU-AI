@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { Home as HomeIcon, MessageSquare, CheckCircle, Info, MapPin } from 'lucide-react';
 import './App.css';
 
@@ -21,11 +21,11 @@ function App() {
             <span>EleEdu AI</span>
           </div>
           <div className="nav-links">
-            <Link to="/" className="nav-link"><HomeIcon size={20} /> Dashboard</Link>
-            <Link to="/assistant" className="nav-link"><MessageSquare size={20} /> Assistant</Link>
-            <Link to="/checker" className="nav-link"><CheckCircle size={20} /> Checker</Link>
-            <Link to="/explainer" className="nav-link"><Info size={20} /> Flow</Link>
-            <Link to="/locator" className="nav-link"><MapPin size={20} /> Booths</Link>
+            <NavLink to="/" className="nav-link"><HomeIcon size={20} /> Dashboard</NavLink>
+            <NavLink to="/assistant" className="nav-link"><MessageSquare size={20} /> Assistant</NavLink>
+            <NavLink to="/checker" className="nav-link"><CheckCircle size={20} /> Checker</NavLink>
+            <NavLink to="/explainer" className="nav-link"><Info size={20} /> Flow</NavLink>
+            <NavLink to="/locator" className="nav-link"><MapPin size={20} /> Booths</NavLink>
           </div>
           <div className="nav-actions">
              <button className="btn-secondary">Language</button>
