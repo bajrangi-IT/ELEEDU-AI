@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const { initializeFirebase } = require('./config/firebase');
 require('dotenv').config();
@@ -9,6 +10,7 @@ require('dotenv').config();
 initializeFirebase();
 
 const app = express();
+app.use(compression()); // Optimize bandwidth efficiency
 const PORT = process.env.PORT || 5000;
 
 // Security: Validate required environment variables at startup

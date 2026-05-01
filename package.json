@@ -10,6 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "cd server && npm run dev",
     "client": "cd client && npm run dev",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "keywords": [],
@@ -22,6 +24,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.15.2",
+    "compression": "^1.8.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
