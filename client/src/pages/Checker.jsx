@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle, XCircle, ChevronRight, Info } from 'lucide-react';
+import axios from 'axios';
 
 const Checker = () => {
   const [formData, setFormData] = useState({
@@ -15,33 +16,38 @@ const Checker = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setResult(null);
     
-    // Simulate API call to /api/check-eligibility
-    setTimeout(() => {
-      const reasons = [];
-      const age = parseInt(formData.age);
-      const residency = parseInt(formData.residencyPeriod);
-
-      if (age < 18) reasons.push('You must be at least 18 years old to vote.');
-      if (!formData.isCitizen) reasons.push('You must be a citizen to vote.');
-      if (residency < 6) reasons.push('You must have been a resident for at least 6 months.');
-
+    try {
+      const response = await axios.post('/api/check-eligibility', {
+        age: parseInt(formData.age),
+        isCitizen: formData.isCitizen,
+        residencyPeriod: parseInt(formData.residencyPeriod)
+      });
+      
       setResult({
-        isEligible: reasons.length === 0,
-        reasons: reasons.length > 0 ? reasons : ['Great! You meet the primary criteria for voting.'],
-        nextSteps: reasons.length === 0 
+        ...response.data,
+        nextSteps: response.data.isEligible 
           ? ['Register on the national portal', 'Find your polling booth', 'Check upcoming election dates']
           : ['Register once you turn 18', 'Apply for citizenship if applicable', 'Wait for residency requirement']
       });
+    } catch (error) {
+      console.error('Eligibility Check Error:', error);
+      setResult({
+        isEligible: false,
+        reasons: ['Unable to verify at this moment. Please try again later.'],
+        nextSteps: []
+      });
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (
     <div className="checker-container animate-fade-in">
-      <div className="checker-card glass-morphism">
+      <div className="checker-card glass-morphism" role="main">
         <h2>Voter Eligibility Checker</h2>
-        <p className="subtitle">Answer a few questions to see if you can vote in the next election.</p>
+        <p className="subtitle" id="checker-desc">Answer a few questions to see if you can vote in the next election.</p>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -95,6 +101,7 @@ const Checker = () => {
             className={`result-box ${result.isEligible ? 'success' : 'failure'}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            aria-live="polite"
           >
             <div className="result-header">
               {result.isEligible ? <CheckCircle size={32} /> : <XCircle size={32} />}

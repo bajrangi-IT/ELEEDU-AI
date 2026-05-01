@@ -1,14 +1,21 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { checkEligibility } = require('../utils/eligibility');
 const { translateText } = require('../services/googleServices');
+const NodeCache = require('node-cache');
 require('dotenv').config();
 
-// Initialize Gemini with multiple model attempts
+// Initialize Caching (TTL 1 hour)
+const chatCache = new NodeCache({ stdTTL: 3600 });
+
+// Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
 const validateEligibility = (req, res) => {
   try {
     const userData = req.body;
+    if (!userData || typeof userData !== 'object') {
+      return res.status(400).json({ error: 'Invalid user data' });
+    }
     const result = checkEligibility(userData);
     res.json(result);
   } catch (error) {
@@ -28,8 +35,15 @@ const getElectionTypes = (req, res) => {
 const handleChat = async (req, res) => {
   const { query, lang = 'en' } = req.body;
   
-  if (!query) {
-    return res.status(400).json({ error: 'Query is required' });
+  if (!query || typeof query !== 'string' || query.length > 500) {
+    return res.status(400).json({ error: 'Valid query (max 500 chars) is required' });
+  }
+
+  // Check Cache
+  const cacheKey = `${lang}_${query.toLowerCase().trim()}`;
+  const cachedResponse = chatCache.get(cacheKey);
+  if (cachedResponse) {
+    return res.json({ response: cachedResponse, cached: true });
   }
 
   try {
@@ -48,27 +62,14 @@ const handleChat = async (req, res) => {
     const prompt = `${systemPrompt}\n\nUser Question: ${query}`;
     
     let responseText;
-    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key') {
-      // Try specific model versions verified for this key
-      const modelsToTry = ["gemini-flash-latest", "gemini-pro-latest", "gemini-2.5-flash-lite"];
-      let lastError;
-
-      for (const modelName of modelsToTry) {
-        try {
-          const model = genAI.getGenerativeModel({ model: modelName });
-          const result = await model.generateContent(prompt);
-          const response = await result.response;
-          responseText = response.text();
-          if (responseText) break; // Success!
-        } catch (err) {
-          console.warn(`Model ${modelName} failed:`, err.message);
-          lastError = err;
-        }
-      }
-
-      if (!responseText) {
-        throw new Error(`AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
-      }
+    if (process.env.GEMINI_API_KEY && 
+        process.env.GEMINI_API_KEY !== 'your_gemini_api_key' && 
+        process.env.GEMINI_API_KEY !== 'MOCK_KEY' &&
+        process.env.GEMINI_API_KEY.startsWith('AIza')) {
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      responseText = response.text();
     } else {
       responseText = `[MOCK AI MODE] I received your question: "${query}". Please check your GEMINI_API_KEY.`;
     }
@@ -76,6 +77,9 @@ const handleChat = async (req, res) => {
     if (lang !== 'en') {
       responseText = await translateText(responseText, lang);
     }
+
+    // Save to Cache
+    chatCache.set(cacheKey, responseText);
 
     res.json({ response: responseText });
   } catch (error) {

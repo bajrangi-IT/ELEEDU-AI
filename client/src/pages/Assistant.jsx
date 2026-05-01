@@ -86,7 +86,13 @@ const Assistant = () => {
             </div>
           </div>
           <div className="chat-actions">
-            <button className="icon-btn" onClick={() => speak(messages[messages.length-1]?.text)}><Volume2 size={18} /></button>
+            <button 
+              className="icon-btn" 
+              onClick={() => speak(messages[messages.length-1]?.text)}
+              aria-label="Read last message aloud"
+            >
+              <Volume2 size={18} />
+            </button>
           </div>
         </div>
 
@@ -135,9 +141,14 @@ const Assistant = () => {
             placeholder="Ask about voting, registration, or candidates..." 
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            aria-label="Chat Input"
+            aria-label="Chat input field"
           />
-          <button type="submit" className="send-btn" disabled={!input.trim()}>
+          <button 
+            type="submit" 
+            className="send-btn" 
+            disabled={!input.trim()}
+            aria-label="Send message"
+          >
             <Send size={20} />
           </button>
         </form>
