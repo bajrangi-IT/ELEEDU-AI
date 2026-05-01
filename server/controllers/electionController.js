@@ -127,7 +127,7 @@ const handleChat = async (req, res) => {
       }
 
       if (!responseText) {
-        throw new Error(`AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
+        throw new Error(`[VER 2.0] AI Brain Error: All attempted models failed. Last error: ${lastError.message}`);
       }
     } else {
       // Fallback/Mock mode for local development or missing configuration
