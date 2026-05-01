@@ -1,0 +1,15 @@
+{
+  "short_name": "EleEdu AI",
+  "name": "EleEdu AI - Intelligent Election Assistant",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#030712"
+}

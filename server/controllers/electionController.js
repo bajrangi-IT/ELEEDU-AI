@@ -1,49 +1,85 @@
+/**
+ * Election Assistant Controller
+ * Handles user interactions, eligibility checks, and AI-driven chat responses.
+ */
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { checkEligibility } = require('../utils/eligibility');
 const { translateText } = require('../services/googleServices');
 const NodeCache = require('node-cache');
 require('dotenv').config();
 
-// Initialize Caching (TTL 1 hour)
+// Initialize Caching (TTL 1 hour) for optimized performance and reduced API costs
 const chatCache = new NodeCache({ stdTTL: 3600 });
 
-// Initialize Gemini
+// Initialize Google Gemini Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
+/**
+ * Validates voter eligibility based on user-provided demographic data.
+ * @param {import('express').Request} req - Express request object containing userData.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {void}
+ */
 const validateEligibility = (req, res) => {
   try {
     const userData = req.body;
     if (!userData || typeof userData !== 'object') {
-      return res.status(400).json({ error: 'Invalid user data' });
+      return res.status(400).json({ 
+        success: false,
+        error: 'Invalid request: User data is required and must be an object.' 
+      });
     }
     const result = checkEligibility(userData);
-    res.json(result);
+    res.status(200).json({ success: true, ...result });
   } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Eligibility Controller Error:', error);
+    res.status(500).json({ success: false, error: 'Internal server error during eligibility check.' });
   }
 };
 
+/**
+ * Retrieves available election categories and their metadata.
+ * @param {import('express').Request} req - Express request object.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {void}
+ */
 const getElectionTypes = (req, res) => {
   const types = [
-    { id: 'national', name: 'National Elections (Lok Sabha)', frequency: '5 Years' },
-    { id: 'state', name: 'State Assembly (Vidhan Sabha)', frequency: '5 Years' },
-    { id: 'local', name: 'Local Bodies (Panchayat/Municipal)', frequency: '5 Years' }
+    { id: 'national', name: 'National Elections (Lok Sabha)', frequency: '5 Years', icon: 'Globe' },
+    { id: 'state', name: 'State Assembly (Vidhan Sabha)', frequency: '5 Years', icon: 'Map' },
+    { id: 'local', name: 'Local Bodies (Panchayat/Municipal)', frequency: '5 Years', icon: 'Building' }
   ];
-  res.json(types);
+  res.status(200).json(types);
 };
 
+/**
+ * Handles AI-driven conversational queries using Google Gemini.
+ * Implements response caching and multi-language translation support.
+ * @param {import('express').Request} req - Express request object containing query and lang.
+ * @param {import('express').Response} res - Express response object.
+ * @returns {Promise<void>}
+ */
 const handleChat = async (req, res) => {
   const { query, lang = 'en' } = req.body;
   
+  // Input Validation (Security & Quality)
   if (!query || typeof query !== 'string' || query.length > 500) {
-    return res.status(400).json({ error: 'Valid query (max 500 chars) is required' });
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Validation Error: Valid query (max 500 characters) is required.' 
+    });
   }
 
-  // Check Cache
+  // Cache Lookup for Performance Efficiency
   const cacheKey = `${lang}_${query.toLowerCase().trim()}`;
   const cachedResponse = chatCache.get(cacheKey);
   if (cachedResponse) {
-    return res.json({ response: cachedResponse, cached: true });
+    return res.status(200).json({ 
+      success: true,
+      response: cachedResponse, 
+      cached: true 
+    });
   }
 
   try {
@@ -62,30 +98,36 @@ const handleChat = async (req, res) => {
     const prompt = `${systemPrompt}\n\nUser Question: ${query}`;
     
     let responseText;
+    
+    // Check for valid API configuration
     if (process.env.GEMINI_API_KEY && 
         process.env.GEMINI_API_KEY !== 'your_gemini_api_key' && 
         process.env.GEMINI_API_KEY !== 'MOCK_KEY' &&
         process.env.GEMINI_API_KEY.startsWith('AIza')) {
+      
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const result = await model.generateContent(prompt);
       const response = await result.response;
       responseText = response.text();
     } else {
-      responseText = `[MOCK AI MODE] I received your question: "${query}". Please check your GEMINI_API_KEY.`;
+      // Fallback/Mock mode for local development or missing configuration
+      responseText = `[MOCK AI MODE] I received your question: "${query}". Please check your GEMINI_API_KEY configuration on the platform.`;
     }
 
+    // Language Translation Support via Google Cloud Services
     if (lang !== 'en') {
       responseText = await translateText(responseText, lang);
     }
 
-    // Save to Cache
+    // Persist response to cache
     chatCache.set(cacheKey, responseText);
 
-    res.json({ response: responseText });
+    res.status(200).json({ success: true, response: responseText });
   } catch (error) {
-    console.error('Gemini API Error:', error);
+    console.error('Gemini API Integration Error:', error);
     res.status(500).json({ 
-      error: 'Failed to generate AI response',
+      success: false,
+      error: 'AI Error: Failed to generate response.',
       details: error.message 
     });
   }
