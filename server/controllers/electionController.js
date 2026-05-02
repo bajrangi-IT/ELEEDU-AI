@@ -1,4 +1,5 @@
 const geminiService = require('../services/geminiService');
+const analyticsService = require('../services/analyticsService');
 const { checkEligibility } = require('../utils/eligibility');
 const { translateText } = require('../services/googleServices');
 const NodeCache = require('node-cache');
@@ -22,6 +23,7 @@ const validateEligibility = (req, res) => {
       });
     }
     const result = checkEligibility(userData);
+    analyticsService.trackEvent('Eligibility', 'Check', { isEligible: result.isEligible });
     res.status(200).json({ success: true, ...result });
   } catch (error) {
     console.error('Eligibility Controller Error:', error);
@@ -75,6 +77,7 @@ const handleChat = async (req, res) => {
     
     // Call the dedicated Gemini service with history
     let responseText = await geminiService.generateResponse(prompt, history);
+    analyticsService.trackEvent('Chat', 'Query', { lang, queryLength: query.length });
 
     // Multilingual support
     if (lang !== 'en') {
