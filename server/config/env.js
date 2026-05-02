@@ -1,5 +1,5 @@
 const { cleanEnv, str, port } = require('envalid');
-const logger = require('./logger');
+const logger = require('../services/logger');
 
 /**
  * Validates environment variables at startup.
