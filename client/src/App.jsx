@@ -23,15 +23,15 @@ function App() {
               <span>EleEdu AI</span>
             </div>
             <div className="nav-links">
-              <NavLink to="/" className="nav-link" aria-label="Dashboard"><HomeIcon size={20} aria-hidden="true" /> Dashboard</NavLink>
-              <NavLink to="/assistant" className="nav-link" aria-label="AI Assistant"><MessageSquare size={20} aria-hidden="true" /> Assistant</NavLink>
-              <NavLink to="/checker" className="nav-link" aria-label="Eligibility Checker"><CheckCircle size={20} aria-hidden="true" /> Checker</NavLink>
-              <NavLink to="/explainer" className="nav-link" aria-label="Process Explainer"><Info size={20} aria-hidden="true" /> Flow</NavLink>
-              <NavLink to="/locator" className="nav-link" aria-label="Booth Locator"><MapPin size={20} aria-hidden="true" /> Booths</NavLink>
+              <NavLink to="/" className="nav-link" aria-label="Go to Dashboard Page"><HomeIcon size={20} aria-hidden="true" /> Dashboard</NavLink>
+              <NavLink to="/assistant" className="nav-link" aria-label="Go to AI Election Assistant"><MessageSquare size={20} aria-hidden="true" /> Assistant</NavLink>
+              <NavLink to="/checker" className="nav-link" aria-label="Check your Voter Eligibility"><CheckCircle size={20} aria-hidden="true" /> Checker</NavLink>
+              <NavLink to="/explainer" className="nav-link" aria-label="Understand the Voting Process"><Info size={20} aria-hidden="true" /> Flow</NavLink>
+              <NavLink to="/locator" className="nav-link" aria-label="Locate your nearest Polling Station"><MapPin size={20} aria-hidden="true" /> Booths</NavLink>
             </div>
             <div className="nav-actions">
-               <button className="btn-secondary" aria-label="Select Language">Language</button>
-               <button className="btn-primary" aria-label="User Sign In">Sign In</button>
+               <button className="btn-secondary" aria-label="Select Application Language" title="Select Language">Language</button>
+               <button className="btn-primary" aria-label="Access User Profile or Sign In" title="Sign In">Sign In</button>
             </div>
           </nav>
         </header>

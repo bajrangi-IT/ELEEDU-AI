@@ -5,6 +5,10 @@
 
 # 🏗️ Architecture Design
 
+## 🎯 Challenge Vertical Alignment
+- **Primary Vertical**: Voter Education & Empowerment
+- **Persona Implementation**: The application is designed as an empathetic, high-intelligence tutor that simplifies complex electoral procedures for the average citizen.
+
 EleEdu AI follows the **Service-Controller-Repository** pattern for maximum maintainability and scalability.
 
 ## 1. Backend Design Patterns
