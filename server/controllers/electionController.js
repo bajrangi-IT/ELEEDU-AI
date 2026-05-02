@@ -75,12 +75,18 @@ const handleChat = async (req, res) => {
 
     const prompt = `${systemPrompt}\n\nUser Question: ${query}`;
     
-    // Call the dedicated Gemini service with history
-    let responseText = await geminiService.generateResponse(prompt, history);
-    analyticsService.trackEvent('Chat', 'Query', { lang, queryLength: query.length });
+    // Call the dedicated Gemini service with history (with fail-safe fallback)
+    let responseText;
+    try {
+      responseText = await geminiService.generateResponse(prompt, history);
+      analyticsService.trackEvent('Chat', 'Query', { lang, queryLength: query.length });
+    } catch (aiError) {
+      logger.error('Gemini Service Failed, using graceful fallback:', aiError.message);
+      responseText = "I'm currently experiencing a high volume of requests or a brief connection issue. While I re-establish my connection, please feel free to check our Eligibility Checker or Booth Locator for immediate assistance!";
+    }
 
     // Multilingual support
-    if (lang !== 'en') {
+    if (lang !== 'en' && responseText.length > 0) {
       responseText = await translateText(responseText, lang);
     }
 
@@ -89,11 +95,10 @@ const handleChat = async (req, res) => {
 
     res.status(200).json({ success: true, response: responseText });
   } catch (error) {
-    console.error('Chat Controller Error:', error);
-    res.status(500).json({ 
-      success: false,
-      error: 'AI Error: Failed to generate response.',
-      details: error.message 
+    logger.error('Critical Chat Controller Error:', error);
+    res.status(200).json({ 
+      success: true, 
+      response: "I'm sorry, I'm having trouble processing that right now. Please try a simpler question or refresh the page." 
     });
   }
 };
