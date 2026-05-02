@@ -9,8 +9,12 @@ const { initializeFirebase } = require('./config/firebase');
 require('dotenv').config();
 
 // Professional Orchestration
-validateEnv();
-initializeFirebase();
+try {
+  validateEnv();
+  initializeFirebase();
+} catch (err) {
+  logger.error('Startup Error:', err.message);
+}
 
 const app = express();
 app.use(compression()); 

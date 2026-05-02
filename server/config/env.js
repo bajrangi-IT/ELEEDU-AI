@@ -11,7 +11,7 @@ const validateEnv = () => {
       NODE_ENV: str({ choices: ['development', 'test', 'production'], default: 'production' }),
       PORT: port({ default: 5000 }),
       GEMINI_API_KEY: str({ desc: 'Google Gemini API Key for AI Assistant' }),
-      VITE_GOOGLE_MAPS_API_KEY: str({ desc: 'Google Maps API Key for Booth Locator' })
+      VITE_GOOGLE_MAPS_API_KEY: str({ desc: 'Google Maps API Key', default: '' })
     });
     logger.info('Environment variables validated successfully.');
   } catch (error) {
