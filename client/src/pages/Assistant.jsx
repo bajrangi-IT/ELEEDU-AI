@@ -101,19 +101,27 @@ const Assistant = () => {
           </div>
         </div>
 
-        <div className="messages-area">
+        <div 
+          className="messages-area" 
+          role="log" 
+          aria-live="polite" 
+          aria-relevant="additions"
+          aria-label="Chat history"
+        >
           <AnimatePresence>
             {messages.map((msg) => (
               <motion.div 
                 key={msg.id} 
                 className={`message-wrapper ${msg.type}`}
+                role="article"
+                aria-label={`${msg.type === 'user' ? 'Your message' : 'AI Assistant message'} sent at ${msg.timestamp.toLocaleTimeString()}`}
                 initial={{ opacity: 0, x: msg.type === 'user' ? 20 : -20 }}
                 animate={{ opacity: 1, x: 0 }}
               >
                 <div className={`message-bubble ${msg.isMisinformation ? 'misinfo' : ''}`}>
                   {msg.isMisinformation && (
-                    <div className="misinfo-alert">
-                      <AlertTriangle size={14} /> Fact-check needed
+                    <div className="misinfo-alert" role="alert">
+                      <AlertTriangle size={14} aria-hidden="true" /> Fact-check needed
                     </div>
                   )}
                   {formatMessage(msg.text)}
@@ -125,7 +133,7 @@ const Assistant = () => {
             ))}
           </AnimatePresence>
           {isTyping && (
-            <div className="typing-indicator">
+            <div className="typing-indicator" aria-label="AI is typing">
               <span></span><span></span><span></span>
             </div>
           )}

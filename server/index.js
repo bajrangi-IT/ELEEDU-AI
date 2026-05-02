@@ -1,51 +1,34 @@
 const express = require('express');
 const cors = require('cors');
-const helmet = require('helmet');
-const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const SecurityMiddleware = require('./middleware/security');
+const logger = require('./services/logger');
+const validateEnv = require('./config/env');
 const { initializeFirebase } = require('./config/firebase');
 require('dotenv').config();
 
-// Initialize Services
+// Professional Orchestration
+validateEnv();
 initializeFirebase();
 
 const app = express();
-app.use(compression()); // Optimize bandwidth efficiency
-const PORT = process.env.PORT || 5000;
+app.use(compression()); 
 
-// Security: Validate required environment variables at startup
-if (!process.env.GEMINI_API_KEY) {
-  console.error('FATAL ERROR: GEMINI_API_KEY is not defined in environment variables.');
-  process.exit(1);
-}
+// Apply Enterprise Security Suite
+SecurityMiddleware.apply(app);
 
-// Middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'"], // Removed 'unsafe-inline' for better security
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'", "https://generativelanguage.googleapis.com", "https://maps.googleapis.com"],
-      baseUri: ["'self'"],
-      formAction: ["'self'"],
-    },
-  },
-}));
-
-// CORS Configuration
 app.use(cors({
-  origin: true, // Allow all origins for testing/development
+  origin: true,
   methods: ['GET', 'POST'],
   credentials: true
 }));
 
-app.use(express.json({ limit: '50kb' })); // Increased limit slightly
+app.use(express.json({ limit: '50kb' }));
 
-// Request Logging
+// Professional Request Logging
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  logger.info(`${req.method} ${req.url} - ${req.ip}`);
   next();
 });
 

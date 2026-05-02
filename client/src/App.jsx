@@ -15,26 +15,29 @@ function App() {
     <Router>
       <div className="app-container">
         <a href="#main-content" className="skip-link">Skip to Content</a>
-        <nav className="navbar glass-morphism" role="navigation" aria-label="Main Navigation">
-          <div className="nav-logo">
-            <CheckCircle className="logo-icon" />
-            <span>EleEdu AI</span>
-          </div>
-          <div className="nav-links">
-            <NavLink to="/" className="nav-link"><HomeIcon size={20} /> Dashboard</NavLink>
-            <NavLink to="/assistant" className="nav-link"><MessageSquare size={20} /> Assistant</NavLink>
-            <NavLink to="/checker" className="nav-link"><CheckCircle size={20} /> Checker</NavLink>
-            <NavLink to="/explainer" className="nav-link"><Info size={20} /> Flow</NavLink>
-            <NavLink to="/locator" className="nav-link"><MapPin size={20} /> Booths</NavLink>
-          </div>
-          <div className="nav-actions">
-             <button className="btn-secondary">Language</button>
-             <button className="btn-primary">Sign In</button>
-          </div>
-        </nav>
+        <header role="banner">
+          <nav className="navbar glass-morphism" role="navigation" aria-label="Main Navigation">
+            <div className="nav-logo">
+              <CheckCircle className="logo-icon" aria-hidden="true" />
+              <span className="sr-only">EleEdu AI - Home</span>
+              <span>EleEdu AI</span>
+            </div>
+            <div className="nav-links">
+              <NavLink to="/" className="nav-link" aria-label="Dashboard"><HomeIcon size={20} aria-hidden="true" /> Dashboard</NavLink>
+              <NavLink to="/assistant" className="nav-link" aria-label="AI Assistant"><MessageSquare size={20} aria-hidden="true" /> Assistant</NavLink>
+              <NavLink to="/checker" className="nav-link" aria-label="Eligibility Checker"><CheckCircle size={20} aria-hidden="true" /> Checker</NavLink>
+              <NavLink to="/explainer" className="nav-link" aria-label="Process Explainer"><Info size={20} aria-hidden="true" /> Flow</NavLink>
+              <NavLink to="/locator" className="nav-link" aria-label="Booth Locator"><MapPin size={20} aria-hidden="true" /> Booths</NavLink>
+            </div>
+            <div className="nav-actions">
+               <button className="btn-secondary" aria-label="Select Language">Language</button>
+               <button className="btn-primary" aria-label="User Sign In">Sign In</button>
+            </div>
+          </nav>
+        </header>
 
-        <main className="main-content" id="main-content">
-          <Suspense fallback={<div className="loader">Loading...</div>}>
+        <main className="main-content" id="main-content" role="main" aria-label="Primary Application Content">
+          <Suspense fallback={<div className="loader" role="status">Loading application module...</div>}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/assistant" element={<Assistant />} />
@@ -45,7 +48,7 @@ function App() {
           </Suspense>
         </main>
 
-        <footer className="footer glass-morphism">
+        <footer className="footer glass-morphism" role="contentinfo" aria-label="Application Footer">
           <p>© 2026 EleEdu AI - Empowering Voters through Intelligence</p>
         </footer>
       </div>

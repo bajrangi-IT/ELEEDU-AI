@@ -1,4 +1,5 @@
 const axios = require('axios');
+const logger = require('./logger');
 
 /**
  * Service to handle all interactions with Google Gemini AI.
@@ -44,13 +45,17 @@ class GeminiService {
         );
 
         const content = response.data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (content) return content;
+        if (content) {
+          logger.info(`GeminiService: Successfully generated response using model [${model}]`);
+          return content;
+        }
       } catch (error) {
         lastError = error.response?.data?.error?.message || error.message;
-        console.error(`GeminiService [${model}] failure:`, lastError);
+        logger.warn(`GeminiService: Model [${model}] failure - ${lastError}`);
       }
     }
 
+    logger.error(`GeminiService: All models failed. Last Error: ${lastError}`);
     throw new Error(`GeminiService failed after trying all models. Last Error: ${lastError}`);
   }
 }
