@@ -8,6 +8,8 @@ const validateEnv = require('./config/env');
 const { initializeFirebase } = require('./config/firebase');
 require('dotenv').config();
 
+const PORT = process.env.PORT || 5000;
+
 // Professional Orchestration
 try {
   validateEnv();
