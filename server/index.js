@@ -4,7 +4,6 @@ const rateLimit = require('express-rate-limit');
 const compression = require('compression');
 const SecurityMiddleware = require('./middleware/security');
 const logger = require('./services/logger');
-const validateEnv = require('./config/env');
 const { initializeFirebase } = require('./config/firebase');
 require('dotenv').config();
 
@@ -12,10 +11,13 @@ const PORT = process.env.PORT || 5000;
 
 // Professional Orchestration
 try {
+  const validateEnv = require('./config/env');
   validateEnv();
   initializeFirebase();
+  logger.info('System initialized successfully.');
 } catch (err) {
-  logger.error('Startup Error:', err.message);
+  console.error('System Initialization Warning:', err.message);
+  // We continue to allow the app to serve even if some services fail at startup
 }
 
 const app = express();
