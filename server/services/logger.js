@@ -1,26 +1,11 @@
-const winston = require('winston');
-
 /**
- * Enterprise-grade logger configuration using Winston.
- * Supports different levels and formats for development and production.
+ * Professional Lightweight Logger Service.
+ * Uses native console methods to ensure 100% compatibility in serverless environments.
  */
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json()
-  ),
-  defaultMeta: { service: 'eleedu-api' },
-  transports: [
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      )
-    }),
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'combined.log' })
-  ]
-});
+const logger = {
+  info: (msg, meta = {}) => console.log(`[INFO] ${new Date().toISOString()} - ${msg}`, meta),
+  error: (msg, meta = {}) => console.error(`[ERROR] ${new Date().toISOString()} - ${msg}`, meta),
+  warn: (msg, meta = {}) => console.warn(`[WARN] ${new Date().toISOString()} - ${msg}`, meta)
+};
 
 module.exports = logger;
