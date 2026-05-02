@@ -46,11 +46,11 @@ const Assistant = () => {
       speak(botResponse.text);
     } catch (error) {
       console.error('Chat Error:', error);
-      const details = error.response?.data?.details || "";
+      const serverError = error.response?.data?.error || error.response?.data?.details || error.message;
       const errorMsg = { 
         id: Date.now() + 1, 
         type: 'bot', 
-        text: `I'm having trouble connecting to my AI brain. ${details ? `Error: ${details}` : "Please check your API keys."}`, 
+        text: `I'm having trouble connecting to my AI brain. Detail: ${serverError}`, 
         timestamp: new Date() 
       };
       setMessages(prev => [...prev, errorMsg]);
